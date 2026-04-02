@@ -67,19 +67,21 @@ const GLOBAL_CSS = `
     -webkit-font-smoothing: antialiased;
   }
 
-  /* Scroll reveal animation */
+  /* Scroll reveal animation - reversible on scroll */
   .reveal {
     opacity: 0;
     transform: translateY(32px);
-    transition: opacity 0.7s ease, transform 0.7s ease;
+    transition: opacity 0.55s ease, transform 0.55s ease;
+    will-change: opacity, transform;
   }
   .reveal.visible {
     opacity: 1;
     transform: translateY(0);
   }
-  .reveal-delay-1 { transition-delay: 0.1s; }
-  .reveal-delay-2 { transition-delay: 0.2s; }
-  .reveal-delay-3 { transition-delay: 0.35s; }
+  /* Keep class names for compatibility, but remove artificial stagger so reveal is driven by scroll position */
+  .reveal-delay-1 { transition-delay: 0s; }
+  .reveal-delay-2 { transition-delay: 0s; }
+  .reveal-delay-3 { transition-delay: 0s; }
 
   /* Recharts overrides */
   .recharts-tooltip-wrapper { outline: none; }
@@ -101,24 +103,35 @@ const GLOBAL_CSS = `
    REUSABLE COMPONENTS
    ═══════════════════════════════════════════════════════════════ */
 
-/** Scroll-reveal wrapper — uses IntersectionObserver */
-function Reveal({ children, delay = 0, style = {} }) {
+/** Scroll-reveal wrapper — reversible on scroll using IntersectionObserver */
+function Reveal({ children, delay = 0, style = {}, threshold = 0.2 }) {
   const ref = useRef(null);
+  const [visible, setVisible] = useState(false);
+
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+
     const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) el.classList.add("visible"); },
-      { threshold: 0.12 }
+      ([entry]) => {
+        setVisible(entry.isIntersecting);
+      },
+      {
+        threshold,
+        rootMargin: "0px 0px -8% 0px",
+      }
     );
+
     obs.observe(el);
     return () => obs.disconnect();
-  }, []);
+  }, [threshold]);
+
   const delayClass = delay === 1 ? "reveal-delay-1"
     : delay === 2 ? "reveal-delay-2"
     : delay === 3 ? "reveal-delay-3" : "";
+
   return (
-    <div ref={ref} className={`reveal ${delayClass}`} style={style}>
+    <div ref={ref} className={`reveal ${delayClass} ${visible ? "visible" : ""}`} style={style}>
       {children}
     </div>
   );
