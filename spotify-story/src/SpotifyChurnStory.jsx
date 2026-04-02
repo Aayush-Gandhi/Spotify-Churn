@@ -1,27 +1,3 @@
-/**
- * SpotifyChurnStory.jsx
- * ─────────────────────────────────────────────────────────────────
- * Scrollytelling data story: "Why Users Leave"
- * A Spotify churn analysis for a product/growth team audience.
- *
- * Stack: React + Recharts (no backend, no extra config needed)
- *
- * HOW TO USE IN YOUR REACT ENVIRONMENT:
- * 1. npm install recharts
- * 2. Drop this file into your /src folder
- * 3. Import it in App.jsx: import SpotifyChurnStory from './SpotifyChurnStory'
- * 4. Render it: <SpotifyChurnStory />
- *
- * HOW TO REPLACE MOCK DATA WITH REAL CSV DATA:
- * At the bottom of this file, find the section marked "── DATA LAYER ──".
- * Each data constant has a comment showing the exact CSV aggregation
- * that produced it. To use real data:
- *   - Parse your CSV with Papa Parse or d3.csv
- *   - Run the same groupBy/aggregate logic in JS
- *   - Replace the constant with the computed result
- *   - All charts will update automatically
- * ─────────────────────────────────────────────────────────────────
- */
 
 import { useState, useEffect, useRef } from "react";
 import {
